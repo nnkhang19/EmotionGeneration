@@ -2,7 +2,7 @@
 import torch
 import torch.nn as nn
 
-class AdaIN(nn.Module):
+class CAdaIN(nn.Module):
     def __init__(self):
         super().__init__()
 
@@ -26,7 +26,7 @@ class AdaIN(nn.Module):
 
 
 def test():
-    in_channels = 3
+    in_channels = 512
     img_size=256
 
     # x is source image 
@@ -34,10 +34,10 @@ def test():
 
 
     # y is target image
-    y = torch.rand((2, in_channels))
-    #y = torch.randn((2, in_channels, img_size, img_size))
+    #y = torch.rand((2, in_channels))
+    y = torch.randn((2, in_channels, 16, 16))
 
-    ada = AdaIN()
+    ada = CAdaIN()
 
     t = ada(x, y)
 
