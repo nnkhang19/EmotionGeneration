@@ -3,10 +3,10 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.autograd as autograd
 import numpy as np 
+import config as cf
 
 
-#cuda = True if torch.cuda.is_available() else False
-cuda = False 
+cuda = True if torch.cuda.is_available() else False
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
 def original_gan_loss(target, is_real, mode = 'D'):
@@ -83,7 +83,7 @@ def compute_gradient_penalty(discriminator, real_images, fake_images):
     
     # Get random interpolation between real and fake images
     
-    interpolates = (alpha * real_images + ((1 - alpha) * fake_images)).requires_grad_(True)
+    interpolates = (alpha * real_images + ((1 - alpha) * fake_images)).requires_grad_(True).to(cf.device)
     d_interpolates = discriminator(interpolates)[1]
     fake = Variable(Tensor(real_images.shape[0], 1).fill_(1.0), requires_grad=False)
     
@@ -111,8 +111,13 @@ def identity_loss(original_image, generated_image):
 
 
 def feature_match_loss(x, y): 
-    pass 
+    criterion=nn.L1Loss()
+    loss = 0
+    
+    for x_i, y_i in zip(x, y): 
+        loss += (1./x_i.shape[1]) * criterion(x_i, y_i)
 
+    return loss
 
 def perceptual_loss(x, y):
     pass 
