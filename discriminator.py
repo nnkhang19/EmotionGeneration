@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn 
 from torchvision import models
+import numpy as np 
+from blocks import ResidualBlock
 
 class VggDiscriminator(nn.Module):
     def __init__(self, requires_grad=False, pretrained=True):
