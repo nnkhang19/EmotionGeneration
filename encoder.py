@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn 
 from torchvision import models
 
-class Encoder(nn.Module):
+class VggEncoder(nn.Module):
     def __init__(self, requires_grad=False, pretrained=True):
         super().__init__()
         vgg_pretrained_features = models.vgg19(pretrained=pretrained).features
@@ -36,3 +36,36 @@ class Encoder(nn.Module):
         out_1 = [h_relu1, h_relu2, h_relu3, h_relu4, h_relu5]
 
         return out_1
+
+
+class StyleEncoder(nn.Module):
+
+    def __init__(self, img_size=256, max_conv_dim=512):
+        '''
+            This module based on StyleEncoder module of StarGan V2.
+
+        '''
+        super().__init__()
+        dim_in = 2**14 // img_size
+        blocks = nn.ModuleList()
+        blocks += [nn.Conv2d(3, dim_in, 3, 1, 1)]
+
+        repeat_num = int(np.log2(img_size)) - 2
+        for _ in range(repeat_num):
+            dim_out = min(dim_in*2, max_conv_dim)
+            blocks += [ResidualBlock(dim_in, dim_out, downsample=True)]
+            dim_in = dim_out
+
+        blocks += [nn.LeakyReLU(0.2)]
+        blocks += [nn.Conv2d(dim_out, dim_out, 4, 1, 0)]
+        blocks += [nn.LeakyReLU(0.2)]
+        self.module = blocks
+
+
+    def forward(self, x):
+        feature_maps = []
+        out = x 
+        for m in self.module:
+            out = m(out)
+            feature_maps.append(out)
+        return feature_maps, out
