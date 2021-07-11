@@ -77,7 +77,8 @@ class StyleDiscriminator(nn.Module):
         blocks += [nn.LeakyReLU(0.2)]
         self.module = blocks
 
-        self.last = nn.Linear(max_conv_dim, 1)
+        self.last = nn.Conv2d(max_conv_dim, 1, 1, 1)
+        self.sig = nn.Sigmoid()
 
     def forward(self, x):
         feature_maps = []
@@ -86,6 +87,6 @@ class StyleDiscriminator(nn.Module):
             out = m(out)
             feature_maps.append(out)
         out = self.last(out)
-        return feature_maps, nn.Sigmoid(out)
+        return feature_maps, self.sig(out)
 
         
