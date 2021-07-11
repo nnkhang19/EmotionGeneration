@@ -1,35 +1,43 @@
 import matplotlib.pyplot as plt
 import torch  
+import os 
+import config as cf 
+import matplotlib.pyplot as plt 
 
 
-def show_image(tensor, index):
-    if torch.is_tensor(tensor):
-        image = tensor[index].detach()
-    else:
-        image = tensor
-    plt.imshow(image.permute(1,2,0))
-    plt.xticks([])
-    plt.yticks([])
+def show_images(display_list):
+    title = ['Identity', 'Attribute', 'Generated Image']
+    for i in range(len(display_list)):
+      plt.subplot(1, 3, i+1)
+      plt.title(title[i])
+      # getting the pixel values between [0, 1] to plot it.
+      plt.imshow(display_list[i].permute(1,2,0))
+      plt.axis('off')
+    plt.show()
 
 def convert_to_image(tensor, std, mean):
     return tensor * std[:, None, None] + mean[:, None, None]
 
 
-def save_checkpoint(path, model,learning_rate, optimizer):
+def save_checkpoint(item, item_name):
+    assert item_name in ['generator', 'discriminator', 'encoder', 'optimizer']
+
+    path = os.path.join('saved_models', item_name + '.pth')
     print("Saving checkpoint----------")
-    torch.save({
-            'learning_rate' : learning_rate,
-            'model_state_dict':model.state_dict(),
-            'optimizer_state_dict':optimizer.state_dict(),
+    torch.save(item.state_dict(), path)
 
-        }, path
-
-    )
-
-def load_checkpoint(path):
-    checkpoint = torch.load(path)
+def load_checkpoint(item_name):
     
-    return checkpoint
+    assert item_name in ['generator', 'discriminator', 'encoder', 'optimizer']
+
+    path = os.path.join('saved_models', item_name + '.pth')
+
+    return toch.load(path)
 
 
 
+if __name__ == '__main__':
+    item_name = 'generator'
+    epoch = 1
+    path = os.path.join('saved_models', item_name + f'_{epoch}.pth')
+    print(path)

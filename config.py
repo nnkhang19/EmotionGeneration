@@ -32,8 +32,8 @@ transforms = A.Compose(
     additional_targets={'image0':'image'}
 ) 
 '''
-MEAN = torch.tensor([0.485, 0.456, 0.406])
-STD = torch.tensor([0.229, 0.224, 0.225])
+mean = torch.tensor([0.485, 0.456, 0.406])
+std = torch.tensor([0.229, 0.224, 0.225])
 
 transform = torchvision.transforms.Compose([
     torchvision.transforms.ToTensor(),

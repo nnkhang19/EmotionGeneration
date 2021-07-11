@@ -70,4 +70,4 @@ class StyleEncoder(nn.Module):
         for m in self.module:
             out = m(out)
             feature_maps.append(out)
-        return feature_maps, out
+        return feature_maps
